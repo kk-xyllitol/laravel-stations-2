@@ -1,7 +1,13 @@
 <?php
 
+// Practiceのテストデータを10個作る
+
 namespace Database\Seeders;
 
+use App\Practice;
+use App\Models\Movie;
+use App\Models\Genre;
+use App\Models\Sheet;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,8 +19,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call([
-            SheetTableSeeder::class,
-        ]);
+        // Practice::factory(10)->create();
+        // Movie::factory(30)->create();
+        // Genre::factory(30)->create();
+        $this->call(SheetTableSeeder::class);
     }
 }
