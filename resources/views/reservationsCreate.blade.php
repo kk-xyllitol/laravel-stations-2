@@ -22,6 +22,7 @@
     <div>
       <input type="hidden" name="movie_id" value={{$movie_id}}>
       <input type="hidden" name="schedule_id" value={{$schedule_id}}>
+      <input type="hidden" name="user_id" value="{{ $user->id }}">
       <input type="hidden" name="sheet_id" value="{{ request()->input('sheetId') }}">
       <input type="hidden" name="date" value="{{ request()->input('date') }}">
       <label for="name">{{ __('予約者氏名') }}</label>

@@ -13,26 +13,22 @@ class MovieController extends Controller
 {  
   // 一覧表示
   public function movies(Request $request)
-  {
-    $query = Movie::query();
+  {    
+    $keyword = $request->input('keyword');
+    $is_showing = $request->input('is_showing');
 
-    // キーワードによる検索
-    if ($search = $request->input('keyword')) { // 'search'を'keyword'に変更
-        $query->where(function($q) use ($search) {
-            $q->where('title', 'like', '%' . $search . '%')
-              ->orWhere('description', 'like', '%' . $search . '%');
-        });
-    }
-
-    // is_showingによる絞り込み
-    if ($request->has('is_showing')) {
-        $query->where('is_showing', $request->input('is_showing'));
-    }
-
-    $movies = $query->paginate(20);
-
+    $movies = Movie::query()
+          ->when(isset($keyword), function($query) use ($keyword) {
+            // 作品データの変数名は、 view に渡している変数名と合わせて適宜変更してください
+            // dd("title = '$keyword'");
+            return $query->whereRaw("title = '$keyword'");
+            //return $query->whereRaw("title = '$keyword'");
+          })->when(isset($is_showing), function($query) use ($is_showing) {
+            return $query->where('is_showing', $is_showing);
+          })->paginate(20);
+    
     return view('movies', ['movies' => $movies]);
-}
+  }
 
   // 一覧表示（管理者画面）
   public function adminMovies()
@@ -72,31 +68,30 @@ class MovieController extends Controller
   // 作成
   public function store(CreateMovieRequest $request)  
   { 
+    DB::beginTransaction();
     try {
-      DB::beginTransaction();
       $inputs = $request->validated();
       $genre_check = Genre::where('name', $inputs['genre'])->first();
 
-      $movie=new Movie;
-      $movie->title=$inputs['title'];
-      $movie->image_url=$inputs['image_url'];
-      $movie->published_year=$inputs['published_year'];
-      $movie->is_showing=$inputs['is_showing'];
-      $movie->description=$inputs['description'];
+      $movie = new Movie;
+      $movie->title = $inputs->title;
+      $movie->image_url = $inputs['image_url'];
+      $movie->published_year = $inputs['published_year'];
+      $movie->is_showing = $inputs['is_showing'];
+      $movie->description = $inputs['description'];
 
       if (!$genre_check) {
         $genre=new Genre;
         $genre->name=$inputs['genre'];
         $genre->save();
-        $movie->genre_id=$genre->id;        
+        $movie->genre_id=$genre->id;
       } else {
         $movie->genre_id=$genre_check->id;
       }
       
       $movie->save();
       DB::commit();
-    }
-     catch (\Throwable $e) {
+    } catch (\Throwable $e) {
       DB::rollBack();
       abort(500);
      }

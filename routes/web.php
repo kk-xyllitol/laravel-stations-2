@@ -55,6 +55,7 @@ Route::delete('/admin/reservations/{id}', [ReservationController::class, 'destro
 
 
 // ログイン必要
+Route::middleware('auth')->group(function () {
   // Movie
   // 一覧ページ
   Route::get('/movies', [MovieController::class, 'movies'])->name('movie.show');
@@ -72,3 +73,7 @@ Route::delete('/admin/reservations/{id}', [ReservationController::class, 'destro
   Route::get('/movies/{movie_id}/schedules/{schedule_id}/reservations/create', [ReservationController::class, 'create'])->name('reservation.create');
   // 予約
   Route::post('/reservations/store', [ReservationController::class, 'store'])->name('reservation.store');
+});
+
+require __DIR__.'/auth.php';
+

@@ -10,7 +10,6 @@ use App\Http\Requests\CreateReservationRequest;
 use App\Http\Requests\CreateAdminReservationRequest;
 use App\Http\Requests\UpdateAdminReservationRequest;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -42,7 +41,7 @@ class ReservationController extends Controller
       abort(400);
     }
     $sheets = Sheet::all();
-    return view('reservationsCreate', [ 'sheets' => $sheets, 'movie_id' => $movie_id, 'schedule_id' => $schedule_id]);
+    return view('reservationsCreate', [ 'user' => $user,'sheets' => $sheets, 'movie_id' => $movie_id, 'schedule_id' => $schedule_id]);
   }
 
   // 作成画面表示（管理者）
@@ -75,6 +74,7 @@ class ReservationController extends Controller
     $reservation=new Reservation;
     $reservation->name=$inputs['name'];
     $reservation->email=$inputs['email'];
+    $reservation->user_id=$request['user_id'];
     $reservation->schedule_id=$inputs['schedule_id'];
     $reservation->sheet_id=$inputs['sheet_id'];
     $reservation->date=$inputs['date'];
@@ -100,6 +100,7 @@ class ReservationController extends Controller
     $date = new Carbon('now');
 
     $reservation=new Reservation;
+    $reservation->user_id=$user['id'];
     $reservation->name=$inputs['name'];
     $reservation->email=$inputs['email'];
     $reservation->schedule_id=$inputs['schedule_id'];

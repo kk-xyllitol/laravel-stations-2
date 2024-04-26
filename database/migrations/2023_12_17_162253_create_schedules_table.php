@@ -16,7 +16,7 @@ class CreateSchedulesTable extends Migration
     Schema::create('schedules', function (Blueprint $table) {
       $table->id()->comment('ID');
       $table->unsignedBigInteger('movie_id')->comment('作品ID');
-      
+      $table->unsignedBigInteger('screen_id')->comment('スクリーンID');
       $table->datetime('start_time')->comment('上映開始時刻')->default(null);
       $table->datetime('end_time')->comment('上映終了時刻')->default(null);
       $table->timestamps();

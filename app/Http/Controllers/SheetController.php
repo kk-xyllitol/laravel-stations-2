@@ -16,7 +16,6 @@ class SheetController extends Controller
 
   public function reservation($movie_id, $schedule_id)
   {
-    $schedule = Schedule::find($schedule_id);
     $sheets = Sheet::query()
             ->with(['reservations' => function ($query)  use ($schedule_id){
               $query->where('schedule_id', $schedule_id);
